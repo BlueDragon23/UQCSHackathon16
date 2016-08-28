@@ -42,9 +42,12 @@ struct Coord {
 // player data
 struct Coord player = {.row = 0, .col = 4};
 int moveDelay = 0;
+struct Coord projectile = {.row = -1, .col = 4};
+int shootDelay = 0;
 
 int splash = 0;
 int tick = 0;
+int projectileTick = 0;
 int flash = 0;
 int fps = 8;
 int tps = 25000;
@@ -85,9 +88,15 @@ void loop() {
     } else if (analogX < 1024/4 && player.col != 0) {
       player.col--;
       moveDelay = 1000;
+    } else if (analogY > 1024*3/4 && shootDelay == 0) {
+      projectile = {.row = 1, .col = player.col};
+      shootDelay = 1000;
     }
   } else {
     moveDelay--;
+    if (shootDelay != 0) {
+      shootDelay--;
+    }
   }
   if (tick++ > tps/fps) {
     move_enemy();
@@ -96,12 +105,32 @@ void loop() {
     }
     tick = 0;
   }
+  if (projectile.row != -1 && projectileTick++ > tps/fps/8) {
+    move_projectile();
+    projectileTick = 0;
+  }
   draw_player();
   draw_enemies();
+  draw_projectile();
 }
 
 void draw_player() {
   draw_pixel(player.row, player.col);
+}
+
+void draw_projectile() {
+  if (projectile.row != -1) {
+    draw_pixel(projectile.row, projectile.col);
+  }
+}
+
+void draw_enemies() {
+  for (int i = 0; i < numEnemies; i++) {
+    draw_pixel(positions[i].row, positions[i].col);
+    draw_pixel(positions[i].row, positions[i].col + 1);
+    draw_pixel(positions[i].row - 1, positions[i].col);
+    draw_pixel(positions[i].row - 1, positions[i].col + 1);
+  }
 }
 
 void end_game() {
@@ -148,12 +177,16 @@ void move_enemy() {
   }
 }
 
-void draw_enemies() {
+void move_projectile() {
+  projectile.row += 1;
+  if (projectile.row == 8) {
+    projectile.row = -1;
+  }
   for (int i = 0; i < numEnemies; i++) {
-    draw_pixel(positions[i].row, positions[i].col);
-    draw_pixel(positions[i].row, positions[i].col + 1);
-    draw_pixel(positions[i].row - 1, positions[i].col);
-    draw_pixel(positions[i].row - 1, positions[i].col + 1);
+    if (projectile.row == positions[i].row && projectile.col == positions[i].col) {
+      // Kill enemy
+      numEnemies--;
+    }
   }
 }
 

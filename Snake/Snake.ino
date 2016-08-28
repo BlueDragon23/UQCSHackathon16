@@ -182,7 +182,6 @@ void loop() {
   } else if (flash == tps/16 - 1) {
     flash = 0;
   }
-//  draw_image(fiestarachcatch);
 }
 
 void draw_snek() {

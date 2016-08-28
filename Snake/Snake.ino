@@ -163,9 +163,9 @@ void loop() {
   } else if (analogX < 1024/4) {
     direction = 'W';
   } else if (analogY > 1024*3/4) {
-    direction = 'N';
-  } else if (analogY < 1024/4) {
     direction = 'S';
+  } else if (analogY < 1024/4) {
+    direction = 'N';
   }
   if (tick++ > tps/fps) {
     move();

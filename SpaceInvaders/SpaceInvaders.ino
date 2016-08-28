@@ -88,7 +88,7 @@ void loop() {
     } else if (analogX < 1024/4 && player.col != 0) {
       player.col--;
       moveDelay = 1000;
-    } else if (analogY > 1024*3/4 && shootDelay == 0) {
+    } else if (analogY < 1024/4 && shootDelay == 0) {
       projectile = {.row = 1, .col = player.col};
       shootDelay = 1000;
     }
@@ -186,9 +186,15 @@ void move_projectile() {
     projectile.row = -1;
   }
   for (int i = 0; i < numEnemies; i++) {
-    if (projectile.row == positions[i].row && projectile.col == positions[i].col) {
+    if ((projectile.row == positions[i].row || projectile.row == positions[i].row + 1) && 
+      (projectile.col == positions[i].col || projectile.col == positions[i].col + 1)) {
       // Kill enemy
+      for (int j = i; j < numEnemies - 1; j++) {
+        positions[j] = positions[j + 1];
+      }
       numEnemies--;
+      projectile.row = -1;
+      break;
     }
   }
 }

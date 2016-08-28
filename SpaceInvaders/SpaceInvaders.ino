@@ -112,6 +112,9 @@ void loop() {
   draw_player();
   draw_enemies();
   draw_projectile();
+  if (numEnemies == 0) {
+    end_game();
+  }
 }
 
 void draw_player() {

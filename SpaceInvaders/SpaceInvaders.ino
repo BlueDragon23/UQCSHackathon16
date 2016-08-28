@@ -45,7 +45,7 @@ struct Coord player = {.row = 0, .col = 4};
 int splash = 0;
 int tick = 0;
 int flash = 0;
-int fps = 12;
+int fps = 8;
 int tps = 25000;
 
 // enemy data
@@ -70,7 +70,6 @@ void setup() {
     digitalWrite(col[thisPin], HIGH);
   }
   direction = 'E';
-  delay(1000);
 }
 
 void loop() {
@@ -84,7 +83,6 @@ void loop() {
 //  } else if (analogY > 1024*3/4) {
 //  } else if (analogY < 1024/4) {
 //  }
-  draw_pixel(0, 0);
   if (tick++ > tps/fps) {
     move_enemy();
     if (gameOver) {
@@ -113,7 +111,7 @@ void end_game() {
 
 void move_enemy() {
   if (direction == 'E') {
-    if (positions[numEnemies - 1].col == 7) {
+    if (positions[numEnemies - 1].col == 6) {
       // Move downwards
       for (int i = 0; i < numEnemies; i++) {
         positions[i].row -= 1;
@@ -139,14 +137,17 @@ void move_enemy() {
       }
     }
   }
+  if (positions[0].row == 1) {
+    gameOver = true;
+  }
 }
 
 void draw_enemies() {
   for (int i = 0; i < numEnemies; i++) {
     draw_pixel(positions[i].row, positions[i].col);
     draw_pixel(positions[i].row, positions[i].col + 1);
-    draw_pixel(positions[i].row + 1, positions[i].col);
-    draw_pixel(positions[i].row + 1, positions[i].col + 1);
+    draw_pixel(positions[i].row - 1, positions[i].col);
+    draw_pixel(positions[i].row - 1, positions[i].col + 1);
   }
 }
 

@@ -41,6 +41,7 @@ struct Coord {
 
 // player data
 struct Coord player = {.row = 0, .col = 4};
+int moveDelay = 0;
 
 int splash = 0;
 int tick = 0;
@@ -75,14 +76,19 @@ void setup() {
 void loop() {
   // draw the screen:
   clear_screen();
-  
-//  int analogX = analogRead(0);
-//  int analogY = analogRead(1);
-//  if (analogX > 1024*3/4) {
-//  } else if (analogX < 1024/4) {
-//  } else if (analogY > 1024*3/4) {
-//  } else if (analogY < 1024/4) {
-//  }
+  if (moveDelay == 0) {
+    int analogX = analogRead(0);
+    int analogY = analogRead(1);
+    if (analogX > 1024*3/4 && player.col != 7) {
+      player.col++;
+      moveDelay = 1000;
+    } else if (analogX < 1024/4 && player.col != 0) {
+      player.col--;
+      moveDelay = 1000;
+    }
+  } else {
+    moveDelay--;
+  }
   if (tick++ > tps/fps) {
     move_enemy();
     if (gameOver) {
